@@ -122,10 +122,35 @@ services:
 
 volumes:
   postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/mnt/postgres
   etcd_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/mnt/etcd
   minio_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/mnt/minio
   milvus_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/mnt/milvus
   backend_uploads:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/mnt/uploads
 
 networks:
   hbl_network:
