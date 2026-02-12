@@ -12,6 +12,14 @@ import {
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
+// Create axios instance with ngrok header
+const api = axios.create({
+  baseURL: API_BASE,
+  headers: {
+    'ngrok-skip-browser-warning': 'true',
+  },
+});
+
 interface Document {
   id: string;
   original_filename: string;
@@ -66,14 +74,15 @@ const KnowledgebaseDetailPage = () => {
   const loadFiles = async () => {
     try {
       setLoading(true);
-      const res = await axios.get<PaginatedResponse>(
-        `${API_BASE}/documents/knowledgebase/${kbId}/files?page=${page}&page_size=${pageSize}`
+      const res = await api.get<PaginatedResponse>(
+        `/documents/knowledgebase/${kbId}/files?page=${page}&page_size=${pageSize}`
       );
-      setFiles(res.data.items);
-      setTotalPages(res.data.total_pages);
-      setTotal(res.data.total);
+      setFiles(res.data?.items || []);
+      setTotalPages(res.data?.total_pages || 1);
+      setTotal(res.data?.total || 0);
     } catch (err) {
       console.error("Failed to load files:", err);
+      setFiles([]);
     } finally {
       setLoading(false);
     }
@@ -94,7 +103,7 @@ const KnowledgebaseDetailPage = () => {
         formData.append("knowledgebase_id", kbId);
 
         try {
-          await axios.post(`${API_BASE}/documents/upload`, formData, {
+          await api.post(`/documents/upload`, formData, {
             headers: { "Content-Type": "multipart/form-data" }
           });
         } catch (err: any) {
@@ -118,7 +127,7 @@ const KnowledgebaseDetailPage = () => {
   const handleParse = async (docId: string) => {
     try {
       setParsing(docId);
-      await axios.post(`${API_BASE}/documents/parse/${docId}`);
+      await api.post(`/documents/parse/${docId}`);
       await loadFiles();
       await loadKnowledgebase(); // Refresh document count
     } catch (err: any) {
@@ -133,7 +142,7 @@ const KnowledgebaseDetailPage = () => {
     
     try {
       setDeleting(docId);
-      await axios.delete(`${API_BASE}/documents/${docId}`);
+      await api.delete(`/documents/${docId}`);
       await loadFiles();
       await loadKnowledgebase(); // Refresh document count
     } catch (err: any) {

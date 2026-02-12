@@ -2,6 +2,14 @@ import axios from 'axios';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
+// Create axios instance with ngrok header to bypass browser warning
+const api = axios.create({
+  baseURL: API_BASE,
+  headers: {
+    'ngrok-skip-browser-warning': 'true',
+  },
+});
+
 export interface Knowledgebase {
   id: string;
   name: string;
@@ -46,31 +54,31 @@ export interface PaginatedDocuments {
 
 // Get all knowledgebases
 export async function getKnowledgebases(): Promise<Knowledgebase[]> {
-  const response = await axios.get(`${API_BASE}/knowledgebases/`);
+  const response = await api.get(`/knowledgebases`);
   return response.data;
 }
 
 // Get single knowledgebase
 export async function getKnowledgebase(id: string): Promise<Knowledgebase> {
-  const response = await axios.get(`${API_BASE}/knowledgebases/${id}`);
+  const response = await api.get(`/knowledgebases/${id}`);
   return response.data;
 }
 
 // Create knowledgebase
 export async function createKnowledgebase(data: KnowledgebaseCreate): Promise<Knowledgebase> {
-  const response = await axios.post(`${API_BASE}/knowledgebases/`, data);
+  const response = await api.post(`/knowledgebases`, data);
   return response.data;
 }
 
 // Update knowledgebase
 export async function updateKnowledgebase(id: string, data: KnowledgebaseUpdate): Promise<Knowledgebase> {
-  const response = await axios.put(`${API_BASE}/knowledgebases/${id}`, data);
+  const response = await api.put(`/knowledgebases/${id}`, data);
   return response.data;
 }
 
 // Delete knowledgebase
 export async function deleteKnowledgebase(id: string): Promise<void> {
-  await axios.delete(`${API_BASE}/knowledgebases/${id}`);
+  await api.delete(`/knowledgebases/${id}`);
 }
 
 // Get files in knowledgebase (paginated)
@@ -79,8 +87,8 @@ export async function getKnowledgebaseFiles(
   page: number = 1,
   pageSize: number = 10
 ): Promise<PaginatedDocuments> {
-  const response = await axios.get(
-    `${API_BASE}/documents/knowledgebase/${knowledgebaseId}/files`,
+  const response = await api.get(
+    `/documents/knowledgebase/${knowledgebaseId}/files`,
     { params: { page, page_size: pageSize } }
   );
   return response.data;
@@ -88,7 +96,7 @@ export async function getKnowledgebaseFiles(
 
 // Parse/process document
 export async function parseDocument(documentId: string): Promise<DocumentFile> {
-  const response = await axios.post(`${API_BASE}/documents/parse/${documentId}`);
+  const response = await api.post(`/documents/parse/${documentId}`);
   return response.data;
 }
 
@@ -103,7 +111,7 @@ export async function uploadFileToKnowledgebase(
   formData.append('document_type', document_type);
   formData.append('knowledgebase_id', knowledgebaseId);
 
-  const response = await axios.post(`${API_BASE}/documents/upload`, formData, {
+  const response = await api.post(`/documents/upload`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

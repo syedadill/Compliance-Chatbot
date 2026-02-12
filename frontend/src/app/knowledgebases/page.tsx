@@ -19,10 +19,18 @@ const KnowledgebasesPage = () => {
   const router = useRouter();
   const [knowledgebases, setKnowledgebases] = useState<Knowledgebase[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getKnowledgebases()
-      .then(setKnowledgebases)
+      .then((data) => {
+        setKnowledgebases(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error('Failed to fetch knowledgebases:', err);
+        setError('Failed to load knowledgebases. Please ensure the backend is running.');
+        setKnowledgebases([]);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -75,8 +83,15 @@ const KnowledgebasesPage = () => {
             </div>
           )}
 
+          {/* Error State */}
+          {!loading && error && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+              <p className="text-red-600">{error}</p>
+            </div>
+          )}
+
           {/* Empty State */}
-          {!loading && knowledgebases.length === 0 && (
+          {!loading && !error && knowledgebases.length === 0 && (
             <div className="bg-white rounded-xl border border-hbl-gray-200 p-12 text-center">
               <Folder className="h-16 w-16 text-hbl-gray-300 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-hbl-gray-900 mb-2">
@@ -95,7 +110,7 @@ const KnowledgebasesPage = () => {
           )}
 
           {/* Knowledgebase Grid */}
-          {!loading && knowledgebases.length > 0 && (
+          {!loading && !error && knowledgebases.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {knowledgebases.map((kb) => (
                 <div
