@@ -3,16 +3,15 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getKnowledgebase, updateKnowledgebase, deleteKnowledgebase } from "@/lib/knowledgebaseApi";
-import Header from "@/components/Header";
+import HRHeader from "@/components/HRHeader";
 import axios from "axios";
 import { 
   ArrowLeft, Upload, FileText, CheckCircle, Clock, 
-  AlertCircle, Play, Trash2, MessageCircle, RefreshCw, Pencil, X, Check 
+  AlertCircle, Play, Trash2, RefreshCw, Pencil, X, Check 
 } from "lucide-react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
-// Create axios instance with ngrok header
 const api = axios.create({
   baseURL: API_BASE,
   headers: {
@@ -39,7 +38,7 @@ interface PaginatedResponse {
   total_pages: number;
 }
 
-const KnowledgebaseDetailPage = () => {
+const HRKnowledgebaseDetailPage = () => {
   const params = useParams();
   const router = useRouter();
   const kbId = params.id as string;
@@ -55,7 +54,6 @@ const KnowledgebaseDetailPage = () => {
   const [parsing, setParsing] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
   
-  // Edit state
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
@@ -103,7 +101,6 @@ const KnowledgebaseDetailPage = () => {
     try {
       setUploading(true);
       
-      // Upload files sequentially to avoid overwhelming the server
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const formData = new FormData();
@@ -121,9 +118,7 @@ const KnowledgebaseDetailPage = () => {
       }
       
       await loadFiles();
-      await loadKnowledgebase(); // Refresh document count
-      
-      // Clear the file input
+      await loadKnowledgebase();
       e.target.value = "";
     } catch (err: any) {
       alert(err?.response?.data?.detail || "Upload failed");
@@ -137,7 +132,7 @@ const KnowledgebaseDetailPage = () => {
       setParsing(docId);
       await api.post(`/documents/parse/${docId}`);
       await loadFiles();
-      await loadKnowledgebase(); // Refresh document count
+      await loadKnowledgebase();
     } catch (err: any) {
       alert(err?.response?.data?.detail || "Parsing failed");
     } finally {
@@ -152,7 +147,7 @@ const KnowledgebaseDetailPage = () => {
       setDeleting(docId);
       await api.delete(`/documents/${docId}`);
       await loadFiles();
-      await loadKnowledgebase(); // Refresh document count
+      await loadKnowledgebase();
     } catch (err: any) {
       alert(err?.response?.data?.detail || "Delete failed");
     } finally {
@@ -180,7 +175,7 @@ const KnowledgebaseDetailPage = () => {
     try {
       setDeletingKb(true);
       await deleteKnowledgebase(kbId);
-      router.push("/knowledgebases");
+      router.push("/hr/knowledgebases");
     } catch (err) {
       console.error("Failed to delete knowledgebase:", err);
       alert("Failed to delete knowledgebase");
@@ -205,22 +200,22 @@ const KnowledgebaseDetailPage = () => {
 
   if (!kb) return (
     <div className="flex flex-col h-screen">
-      <Header />
+      <HRHeader />
       <div className="flex-1 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-hbl-green"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     </div>
   );
 
   return (
     <div className="flex flex-col h-screen">
-      <Header />
+      <HRHeader />
       
       <main className="flex-1 overflow-auto bg-hbl-gray-50">
         <div className="max-w-7xl mx-auto px-6 py-8">
           {/* Back Button */}
-          <Link href="/knowledgebases">
-            <button className="flex items-center space-x-2 text-hbl-gray-600 hover:text-hbl-green transition-colors mb-6">
+          <Link href="/hr/knowledgebases">
+            <button className="flex items-center space-x-2 text-hbl-gray-600 hover:text-blue-500 transition-colors mb-6">
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Knowledgebases</span>
             </button>
@@ -236,20 +231,18 @@ const KnowledgebaseDetailPage = () => {
                       type="text"
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      className="text-3xl font-bold text-hbl-gray-900 w-full px-3 py-2 border border-hbl-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-hbl-green"
-                      placeholder="Knowledgebase name"
+                      className="text-3xl font-bold text-hbl-gray-900 w-full px-3 py-2 border border-hbl-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <textarea
                       value={editDescription}
                       onChange={(e) => setEditDescription(e.target.value)}
-                      className="text-hbl-gray-600 w-full px-3 py-2 border border-hbl-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-hbl-green resize-none"
-                      placeholder="Description (optional)"
+                      className="text-hbl-gray-600 w-full px-3 py-2 border border-hbl-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                       rows={2}
                     />
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={handleEditKb}
-                        className="flex items-center space-x-2 px-4 py-2 bg-hbl-green text-white rounded-lg hover:bg-hbl-green-dark transition-colors"
+                        className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                       >
                         <Check className="h-4 w-4" />
                         <span>Save</span>
@@ -272,8 +265,7 @@ const KnowledgebaseDetailPage = () => {
                       <h1 className="text-3xl font-bold text-hbl-gray-900">{kb.name}</h1>
                       <button
                         onClick={() => setIsEditing(true)}
-                        className="p-2 text-hbl-gray-400 hover:text-hbl-green hover:bg-green-50 rounded-lg transition-colors"
-                        title="Edit knowledgebase"
+                        className="p-2 text-hbl-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
                       >
                         <Pencil className="h-5 w-5" />
                       </button>
@@ -281,7 +273,6 @@ const KnowledgebaseDetailPage = () => {
                         onClick={handleDeleteKb}
                         disabled={deletingKb}
                         className="p-2 text-hbl-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
-                        title="Delete knowledgebase"
                       >
                         <Trash2 className="h-5 w-5" />
                       </button>
@@ -293,7 +284,7 @@ const KnowledgebaseDetailPage = () => {
                 )}
                 <div className="flex items-center space-x-6">
                   <div className="flex items-center space-x-2 text-hbl-gray-700">
-                    <FileText className="h-5 w-5 text-hbl-green" />
+                    <FileText className="h-5 w-5 text-blue-500" />
                     <span className="font-semibold">{total}</span>
                     <span className="text-sm">documents</span>
                   </div>
@@ -305,13 +296,7 @@ const KnowledgebaseDetailPage = () => {
               </div>
 
               <div className="flex items-center space-x-3">
-                <Link href="/">
-                  <button className="flex items-center space-x-2 px-4 py-2 border border-hbl-green text-hbl-green rounded-lg hover:bg-green-50 transition-colors">
-                    <MessageCircle className="h-5 w-5" />
-                    <span>Go to Chat</span>
-                  </button>
-                </Link>
-                <label className="flex items-center space-x-2 bg-hbl-green text-white px-6 py-3 rounded-lg hover:bg-hbl-green-dark transition-colors cursor-pointer shadow-md">
+                <label className="flex items-center space-x-2 bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors cursor-pointer shadow-md">
                   <Upload className="h-5 w-5" />
                   <span>{uploading ? "Uploading..." : "Upload Documents"}</span>
                   <input 
@@ -334,7 +319,7 @@ const KnowledgebaseDetailPage = () => {
                 <h2 className="text-xl font-bold text-hbl-gray-900">Documents</h2>
                 <button
                   onClick={loadFiles}
-                  className="flex items-center space-x-2 text-hbl-gray-600 hover:text-hbl-green transition-colors"
+                  className="flex items-center space-x-2 text-hbl-gray-600 hover:text-blue-500 transition-colors"
                 >
                   <RefreshCw className="h-4 w-4" />
                   <span className="text-sm">Refresh</span>
@@ -342,14 +327,12 @@ const KnowledgebaseDetailPage = () => {
               </div>
             </div>
 
-            {/* Loading State */}
             {loading && (
               <div className="flex items-center justify-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-hbl-green"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
               </div>
             )}
 
-            {/* Empty State */}
             {!loading && files.length === 0 && (
               <div className="p-12 text-center">
                 <FileText className="h-16 w-16 text-hbl-gray-300 mx-auto mb-4" />
@@ -357,24 +340,19 @@ const KnowledgebaseDetailPage = () => {
                   No documents uploaded yet
                 </h3>
                 <p className="text-hbl-gray-600 mb-6">
-                  Upload your first compliance document to get started
+                  Upload your first HR policy document to get started
                 </p>
               </div>
             )}
 
-            {/* Documents List */}
             {!loading && files.length > 0 && (
               <div className="divide-y divide-hbl-gray-100">
                 {files.map((file) => (
-                  <div
-                    key={file.id}
-                    className="p-6 hover:bg-hbl-gray-50 transition-colors"
-                  >
+                  <div key={file.id} className="p-6 hover:bg-hbl-gray-50 transition-colors">
                     <div className="flex items-start justify-between">
-                      {/* File Info */}
                       <div className="flex items-start space-x-4 flex-1">
-                        <div className="p-3 bg-green-50 rounded-lg">
-                          <FileText className="h-6 w-6 text-hbl-green" />
+                        <div className="p-3 bg-blue-50 rounded-lg">
+                          <FileText className="h-6 w-6 text-blue-500" />
                         </div>
                         
                         <div className="flex-1 min-w-0">
@@ -387,7 +365,6 @@ const KnowledgebaseDetailPage = () => {
                             <span>{formatDate(file.created_at)}</span>
                           </div>
                           
-                          {/* Status Badge */}
                           <div className="mt-3">
                             {file.is_processed ? (
                               <div className="inline-flex items-center space-x-2 px-3 py-1 bg-green-50 border border-green-200 rounded-full">
@@ -411,25 +388,21 @@ const KnowledgebaseDetailPage = () => {
                         </div>
                       </div>
 
-                      {/* Actions */}
                       <div className="flex items-center space-x-2 ml-4">
                         {!file.is_processed && !file.processing_error && (
                           <button
                             onClick={() => handleParse(file.id)}
                             disabled={parsing === file.id}
-                            className="flex items-center space-x-2 px-4 py-2 bg-hbl-green text-white rounded-lg hover:bg-hbl-green-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
                           >
                             <Play className="h-4 w-4" />
-                            <span className="font-medium">
-                              {parsing === file.id ? "Parsing..." : "Parse Now"}
-                            </span>
+                            <span>{parsing === file.id ? "Parsing..." : "Parse Now"}</span>
                           </button>
                         )}
                         <button
                           onClick={() => handleDelete(file.id)}
                           disabled={deleting === file.id}
                           className="p-2 text-hbl-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
-                          title="Delete document"
                         >
                           <Trash2 className="h-5 w-5" />
                         </button>
@@ -440,7 +413,6 @@ const KnowledgebaseDetailPage = () => {
               </div>
             )}
 
-            {/* Pagination */}
             {!loading && files.length > 0 && totalPages > 1 && (
               <div className="p-6 border-t border-hbl-gray-200">
                 <div className="flex items-center justify-between">
@@ -451,14 +423,14 @@ const KnowledgebaseDetailPage = () => {
                     <button
                       onClick={() => setPage(p => Math.max(1, p - 1))}
                       disabled={page === 1}
-                      className="px-4 py-2 border border-hbl-gray-300 text-hbl-gray-700 rounded-lg hover:bg-hbl-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="px-4 py-2 border border-hbl-gray-300 text-hbl-gray-700 rounded-lg hover:bg-hbl-gray-50 disabled:opacity-50 transition-colors"
                     >
                       Previous
                     </button>
                     <button
                       onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                       disabled={page === totalPages}
-                      className="px-4 py-2 border border-hbl-gray-300 text-hbl-gray-700 rounded-lg hover:bg-hbl-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="px-4 py-2 border border-hbl-gray-300 text-hbl-gray-700 rounded-lg hover:bg-hbl-gray-50 disabled:opacity-50 transition-colors"
                     >
                       Next
                     </button>
@@ -473,4 +445,4 @@ const KnowledgebaseDetailPage = () => {
   );
 };
 
-export default KnowledgebaseDetailPage;
+export default HRKnowledgebaseDetailPage;

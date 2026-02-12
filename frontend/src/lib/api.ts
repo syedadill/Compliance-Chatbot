@@ -100,6 +100,22 @@ export const complianceChat = async (request: ChatRequest): Promise<ChatResponse
   return response.data;
 };
 
+// HR Chatbot endpoints
+export interface HRChatRequest {
+  message: string;
+  document_id?: string;
+}
+
+export interface HRChatResponse {
+  response: string;
+  sources: { document_name: string; content: string }[];
+}
+
+export const hrChat = async (request: HRChatRequest): Promise<HRChatResponse> => {
+  const response = await api.post('/hr/chat', request);
+  return response.data;
+};
+
 export const searchKnowledgeBase = async (
   request: SearchRequest
 ): Promise<SearchResponse> => {

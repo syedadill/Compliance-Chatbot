@@ -10,10 +10,13 @@ const api = axios.create({
   },
 });
 
+export type ChatbotType = 'COMPLIANCE' | 'HR';
+
 export interface Knowledgebase {
   id: string;
   name: string;
   description: string | null;
+  chatbot_type: ChatbotType;
   document_count: number;
   created_at: string;
   updated_at: string;
@@ -22,6 +25,7 @@ export interface Knowledgebase {
 export interface KnowledgebaseCreate {
   name: string;
   description?: string;
+  chatbot_type?: ChatbotType;
 }
 
 export interface KnowledgebaseUpdate {
@@ -53,8 +57,9 @@ export interface PaginatedDocuments {
 }
 
 // Get all knowledgebases
-export async function getKnowledgebases(): Promise<Knowledgebase[]> {
-  const response = await api.get(`/knowledgebases`);
+export async function getKnowledgebases(chatbotType?: ChatbotType): Promise<Knowledgebase[]> {
+  const params = chatbotType ? { chatbot_type: chatbotType } : {};
+  const response = await api.get(`/knowledgebases`, { params });
   return response.data;
 }
 

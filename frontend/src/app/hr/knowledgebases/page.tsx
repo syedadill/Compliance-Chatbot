@@ -3,19 +3,20 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getKnowledgebases, deleteKnowledgebase, updateKnowledgebase } from "@/lib/knowledgebaseApi";
-import Header from "@/components/Header";
-import { Database, Plus, FileText, Clock, MessageCircle, Folder, Pencil, Trash2, X, Check } from "lucide-react";
+import HRHeader from "@/components/HRHeader";
+import { Database, Plus, FileText, Clock, Folder, Pencil, Trash2, X, Check } from "lucide-react";
 
 interface Knowledgebase {
   id: string;
   name: string;
   description: string | null;
+  chatbot_type: string;
   document_count: number;
   created_at: string;
   updated_at: string;
 }
 
-const KnowledgebasesPage = () => {
+const HRKnowledgebasesPage = () => {
   const router = useRouter();
   const [knowledgebases, setKnowledgebases] = useState<Knowledgebase[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +28,7 @@ const KnowledgebasesPage = () => {
 
   const loadKnowledgebases = () => {
     setLoading(true);
-    getKnowledgebases()
+    getKnowledgebases('HR')
       .then((data) => {
         setKnowledgebases(Array.isArray(data) ? data : []);
       })
@@ -91,7 +92,7 @@ const KnowledgebasesPage = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <Header />
+      <HRHeader />
       
       <main className="flex-1 overflow-auto bg-hbl-gray-50">
         <div className="max-w-7xl mx-auto px-6 py-8">
@@ -99,34 +100,26 @@ const KnowledgebasesPage = () => {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-3xl font-bold text-hbl-gray-900 flex items-center space-x-3">
-                <Database className="h-8 w-8 text-hbl-green" />
-                <span>Knowledgebases</span>
+                <Database className="h-8 w-8 text-blue-500" />
+                <span>HR Knowledgebases</span>
               </h1>
               <p className="text-hbl-gray-600 mt-2">
-                Organize and manage your compliance documents
+                Manage HR policies and employee guidelines
               </p>
             </div>
             
-            <div className="flex items-center space-x-3">
-              <Link href="/">
-                <button className="flex items-center space-x-2 px-4 py-2 border border-hbl-green text-hbl-green rounded-lg hover:bg-green-50 transition-colors">
-                  <MessageCircle className="h-5 w-5" />
-                  <span>Go to Chat</span>
-                </button>
-              </Link>
-              <Link href="/knowledgebases/create">
-                <button className="flex items-center space-x-2 bg-hbl-green text-white px-6 py-3 rounded-lg hover:bg-hbl-green-dark transition-colors shadow-md">
-                  <Plus className="h-5 w-5" />
-                  <span>Create Knowledgebase</span>
-                </button>
-              </Link>
-            </div>
+            <Link href="/hr/knowledgebases/create">
+              <button className="flex items-center space-x-2 bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors shadow-md">
+                <Plus className="h-5 w-5" />
+                <span>Create Knowledgebase</span>
+              </button>
+            </Link>
           </div>
 
           {/* Loading State */}
           {loading && (
             <div className="flex items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-hbl-green"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
             </div>
           )}
 
@@ -142,13 +135,13 @@ const KnowledgebasesPage = () => {
             <div className="bg-white rounded-xl border border-hbl-gray-200 p-12 text-center">
               <Folder className="h-16 w-16 text-hbl-gray-300 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-hbl-gray-900 mb-2">
-                No knowledgebases yet
+                No HR knowledgebases yet
               </h3>
               <p className="text-hbl-gray-600 mb-6">
-                Create your first knowledgebase to organize compliance documents
+                Create your first knowledgebase to organize HR policy documents
               </p>
-              <Link href="/knowledgebases/create">
-                <button className="inline-flex items-center space-x-2 bg-hbl-green text-white px-6 py-3 rounded-lg hover:bg-hbl-green-dark transition-colors">
+              <Link href="/hr/knowledgebases/create">
+                <button className="inline-flex items-center space-x-2 bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors">
                   <Plus className="h-5 w-5" />
                   <span>Create Knowledgebase</span>
                 </button>
@@ -162,14 +155,14 @@ const KnowledgebasesPage = () => {
               {knowledgebases.map((kb) => (
                 <div
                   key={kb.id}
-                  onClick={() => router.push(`/knowledgebases/${kb.id}`)}
-                  className="bg-white rounded-xl border border-hbl-gray-200 p-6 hover:shadow-lg hover:border-hbl-green transition-all cursor-pointer group relative"
+                  onClick={() => router.push(`/hr/knowledgebases/${kb.id}`)}
+                  className="bg-white rounded-xl border border-hbl-gray-200 p-6 hover:shadow-lg hover:border-blue-500 transition-all cursor-pointer group relative"
                 >
                   {/* Edit/Delete Actions */}
                   <div className="absolute top-4 right-4 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={(e) => handleEdit(kb, e)}
-                      className="p-2 text-hbl-gray-400 hover:text-hbl-green hover:bg-green-50 rounded-lg transition-colors"
+                      className="p-2 text-hbl-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
                       title="Edit knowledgebase"
                     >
                       <Pencil className="h-4 w-4" />
@@ -187,11 +180,11 @@ const KnowledgebasesPage = () => {
                   {/* Card Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3">
-                      <div className="p-3 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
-                        <Database className="h-6 w-6 text-hbl-green" />
+                      <div className="p-3 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
+                        <Database className="h-6 w-6 text-blue-500" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-hbl-gray-900 group-hover:text-hbl-green transition-colors">
+                        <h3 className="text-lg font-semibold text-hbl-gray-900 group-hover:text-blue-500 transition-colors">
                           {kb.name}
                         </h3>
                       </div>
@@ -219,7 +212,7 @@ const KnowledgebasesPage = () => {
 
                   {/* View Button */}
                   <div className="mt-4">
-                    <button className="w-full py-2 px-4 bg-hbl-gray-50 text-hbl-green rounded-lg group-hover:bg-hbl-green group-hover:text-white transition-colors font-medium text-sm">
+                    <button className="w-full py-2 px-4 bg-hbl-gray-50 text-blue-500 rounded-lg group-hover:bg-blue-500 group-hover:text-white transition-colors font-medium text-sm">
                       View Documents
                     </button>
                   </div>
@@ -251,7 +244,7 @@ const KnowledgebasesPage = () => {
                   type="text"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="w-full px-4 py-2 border border-hbl-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-hbl-green focus:border-transparent"
+                  className="w-full px-4 py-2 border border-hbl-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               
@@ -261,7 +254,7 @@ const KnowledgebasesPage = () => {
                   value={editDescription}
                   onChange={(e) => setEditDescription(e.target.value)}
                   rows={3}
-                  className="w-full px-4 py-2 border border-hbl-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-hbl-green focus:border-transparent resize-none"
+                  className="w-full px-4 py-2 border border-hbl-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 />
               </div>
               
@@ -274,7 +267,7 @@ const KnowledgebasesPage = () => {
                 </button>
                 <button
                   onClick={handleSaveEdit}
-                  className="flex items-center space-x-2 px-4 py-2 bg-hbl-green text-white rounded-lg hover:bg-hbl-green-dark transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                 >
                   <Check className="h-4 w-4" />
                   <span>Save Changes</span>
@@ -288,4 +281,4 @@ const KnowledgebasesPage = () => {
   );
 };
 
-export default KnowledgebasesPage;
+export default HRKnowledgebasesPage;

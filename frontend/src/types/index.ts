@@ -131,3 +131,33 @@ export interface HealthCheck {
   database: string;
   vector_store: string;
 }
+
+// HR Chatbot Types
+export interface HRChatRequest {
+  message: string;
+  document_id?: string;
+}
+
+export interface HRSource {
+  document_name: string;
+  content: string;
+}
+
+export interface HRChatResponse {
+  response: string;
+  sources: HRSource[];
+}
+
+// Chatbot Type
+export type ChatbotType = 'COMPLIANCE' | 'HR';
+
+// Knowledgebase Types
+export interface Knowledgebase {
+  id: string;
+  name: string;
+  description: string | null;
+  chatbot_type: ChatbotType;
+  document_count: number;
+  created_at: string;
+  updated_at: string;
+}

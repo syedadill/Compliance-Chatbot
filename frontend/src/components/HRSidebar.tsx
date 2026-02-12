@@ -10,12 +10,11 @@ interface Message {
   timestamp: Date;
 }
 
-interface SidebarProps {
+interface HRSidebarProps {
   messages: Message[];
-  chatbotType?: 'compliance' | 'hr';
 }
 
-export default function Sidebar({ messages, chatbotType = 'compliance' }: SidebarProps) {
+export default function HRSidebar({ messages }: HRSidebarProps) {
   // Group messages into conversations (user message + assistant response)
   const conversations = [];
   for (let i = 0; i < messages.length; i++) {
@@ -33,7 +32,7 @@ export default function Sidebar({ messages, chatbotType = 'compliance' }: Sideba
       {/* Header */}
       <div className="p-4 border-b border-hbl-gray-200">
         <h3 className="text-sm font-semibold text-hbl-gray-700 uppercase tracking-wide flex items-center space-x-2">
-          <MessageSquare className="h-4 w-4" />
+          <MessageSquare className="h-4 w-4 text-blue-500" />
           <span>Recent Chats</span>
         </h3>
       </div>
@@ -54,10 +53,10 @@ export default function Sidebar({ messages, chatbotType = 'compliance' }: Sideba
               {conversations.map((chat) => (
                 <div
                   key={chat.id}
-                  className="p-3 rounded-lg border border-hbl-gray-200 hover:border-hbl-green hover:bg-green-50 transition-all cursor-pointer"
+                  className="p-3 rounded-lg border border-hbl-gray-200 hover:border-blue-500 hover:bg-blue-50 transition-all cursor-pointer"
                 >
                   <div className="flex items-start space-x-2">
-                    <MessageSquare className="h-4 w-4 text-hbl-green mt-0.5 flex-shrink-0" />
+                    <MessageSquare className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-hbl-gray-900 line-clamp-2">
                         {chat.query}
@@ -76,8 +75,8 @@ export default function Sidebar({ messages, chatbotType = 'compliance' }: Sideba
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-hbl-gray-200 bg-hbl-gray-50">
-        <p className="text-xs text-hbl-gray-500 text-center">
+      <div className="p-4 border-t border-hbl-gray-200 bg-blue-50">
+        <p className="text-xs text-blue-600 text-center">
           {conversations.length} conversation{conversations.length !== 1 ? 's' : ''}
         </p>
       </div>
