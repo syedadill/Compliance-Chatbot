@@ -76,7 +76,7 @@ export default function ChatInterface({ selectedDocument, messages, onMessagesCh
   const exampleQueries = [
     'What are the mandatory requirements for valid electronic filing?',
     'Does this SRO override the Income Tax Ordinance?',
-    'What are the AML reporting obligations?',
+    'What authority is cited for issuing this SRO?',
     'What information must be included in withholding tax statements?',
   ];
 
