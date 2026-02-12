@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Compliance Chatbot',
-  description: 'Enterprise-grade AI Compliance Chatbot',
+  title: 'Lavitas - Enterprise Chatbot',
+  description: 'Enterprise-grade AI Chatbot for Compliance & HR',
 };
 
 export default function RootLayout({

@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // HBL Brand Colors
+        // Lavitas Brand Colors (hbl prefix kept for compatibility)
         hbl: {
           green: {
             DEFAULT: '#00703C',

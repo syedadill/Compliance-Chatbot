@@ -1,5 +1,5 @@
 /**
- * HBL Compliance Chatbot - Utility Functions
+ * Lavitas Compliance Chatbot - Utility Functions
  */
 
 import { clsx, type ClassValue } from 'clsx';

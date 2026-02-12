@@ -10,7 +10,7 @@ export default function Home() {
       <header className="bg-hbl-green text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="text-center">
-            <h1 className="text-3xl font-bold">HBL Enterprise Chatbot</h1>
+            <h1 className="text-3xl font-bold">Lavitas Enterprise Chatbot</h1>
             <p className="text-green-100 mt-2">AI-Powered Assistant for Compliance & HR</p>
           </div>
         </div>
@@ -146,7 +146,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="text-center py-8 text-hbl-gray-500 text-sm">
-        <p>© 2026 HBL Bank Pakistan. Enterprise AI Chatbot Platform.</p>
+        <p>© 2026 Lavitas. Enterprise AI Chatbot Platform.</p>
       </footer>
     </div>
   );

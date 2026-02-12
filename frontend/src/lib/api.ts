@@ -1,5 +1,5 @@
 /**
- * HBL Compliance Chatbot - API Client
+ * Lavitas Compliance Chatbot - API Client
  */
 
 import axios from 'axios';
